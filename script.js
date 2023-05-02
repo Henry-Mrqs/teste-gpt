@@ -23,6 +23,7 @@ function addTransaction(event) {
   updateList();
   updateBalance();
   resetForm();
+  saveTransactionsToCookie();
 }
 
 function updateList() {
@@ -54,13 +55,31 @@ function removeTransaction(index) {
   transactions.splice(index, 1);
   updateList();
   updateBalance();
+  saveTransactionsToCookie();
 }
 
 function resetForm() {
   form.reset();
 }
 
+function saveTransactionsToCookie() {
+  document.cookie = `transactions=${JSON.stringify(transactions)}; max-age=7892608`;
+}
+
+function getTransactionsFromCookie() {
+  const cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)transactions\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+  if (cookieValue) {
+    transactions = JSON.parse(cookieValue);
+    updateList();
+    updateBalance();
+  }
+}
+
 form.addEventListener("submit", addTransaction);
+
+getTransactionsFromCookie();
+
 
 
 // Create new switch theme function
