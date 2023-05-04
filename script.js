@@ -32,7 +32,7 @@ function updateList() {
     transactionsHTML += `
       <tr>
         <td>${transaction.description}</td>
-        <td class="${transaction.type === "income" ? "saldo" : "debito"}">${transaction.type === "income" ? "+" : "-"}${transaction.value}</td>
+        <td class="${transaction.type === "income" ? "saldo" : "debito"}">${transaction.type === "income" ? "+" : "-"}${parseFloat(transaction.value.toFixed(2)).toLocaleString('pt-BR', {currency: 'BRL', style: 'currency', minimumFractionDigits: 2})}</td>
         <td><button onclick="removeTransaction(${index})" class="outcome delete-btn">Excluir</button></td>
       </tr>
     `;
@@ -48,7 +48,7 @@ function updateBalance() {
       transaction.type === "income" ? transaction.value : -transaction.value;
   });
 
-  balanceValue.innerHTML = `R$ ${balance.toFixed(2)}`;
+  balanceValue.innerHTML = `${parseFloat(balance.toFixed(2)).toLocaleString('pt-BR', {currency: 'BRL', style: 'currency', minimumFractionDigits: 2})}`;
 }
 
 function removeTransaction(index) {
@@ -123,3 +123,31 @@ document.addEventListener('click', function () {
     addButton.style.backgroundColor = '#d50000'
   }
 })
+
+/* Adicionando efeitos sonoros */
+
+addButton.addEventListener('click', function () {
+  if (incomeValue.checked && description.value.length > 0 && value.value.length > 0){
+    document.querySelector('#cash-in').play();
+  } else if (expenseValue.checked && description && value){
+    document.querySelector('#cash-out').play();
+  }
+})
+
+/* Mudar cor do valor final */
+
+function validarCorValorFinal(){
+  setTimeout( () => {
+    var verifVal = document.querySelector('#balance-value').innerHTML
+    if(String(verifVal).indexOf('R$&nbsp;0,00') !== -1 ){
+      document.querySelector('#balance-value').style.color = "#FFF"
+    } else if(String(verifVal).indexOf('-') !== -1 ){
+      document.querySelector('#balance-value').style.color = "#ff9090"
+    } else{
+      document.querySelector('#balance-value').style.color = "#90ff90"
+    }
+  }, 300)
+}
+validarCorValorFinal();
+
+document.addEventListener('click', validarCorValorFinal);
